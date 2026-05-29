@@ -41,11 +41,10 @@ transition:.5s;
 
 .box{
 
-width:92%;
-max-width:430px;
-min-height:520px;
+width:90%;
+max-width:360px;
 
-padding:28px;
+padding:20px;
 
 border-radius:25px;
 background:white;
@@ -178,7 +177,9 @@ transform:translateY(0);
 }
 
 .membesar{
-animation:boom .5s;
+animation:boom .7s;
+z-index:999;
+position:relative;
 }
 
 @keyframes boom{
@@ -187,16 +188,20 @@ animation:boom .5s;
 transform:scale(1);
 }
 
-40%{
-transform:scale(1.4);
+30%{
+transform:scale(1.3);
 }
 
-70%{
-transform:scale(.9);
+55%{
+transform:scale(1.15);
+}
+
+80%{
+transform:scale(1.8);
 }
 
 100%{
-transform:scale(30);
+transform:scale(2.4);
 opacity:0;
 }
 
@@ -488,21 +493,32 @@ function lanjut(){
 let btn=
 event.target;
 
+btn.innerHTML=
+"🎉";
+
 btn.classList.add("membesar");
 
+navigator.vibrate?.(100);
+
+document.body.style.transition=
+".6s";
+
 document.body.style.transform=
-"scale(1.05)";
+"scale(1.03)";
 
 setTimeout(()=>{
 
 document.body.style.transform=
 "scale(1)";
 
-no++;
+},300);
 
+setTimeout(()=>{
+
+no++;
 tampil();
 
-},500);
+},650);
 
 }
 
@@ -626,7 +642,7 @@ ketik();
 function wa(){
 
 window.location.href=
-"https://wa.me/6285137772160";
+"https://wa.me/6285137772160?text=Halo%20✨%20Aku%20sudah%20menyelesaikan%20semua%20pertanyaannya%20🌸";
 
 }
 
