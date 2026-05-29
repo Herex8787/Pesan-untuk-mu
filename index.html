@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Pesan Rahasia</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:linear-gradient(
+-45deg,
+#ffd1dc,
+#ffe6f2,
+#e6ccff,
+#ffcce6
+);
+
+background-size:400% 400%;
+animation:bg 10s infinite;
+transition:.5s;
+}
+
+@keyframes bg{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+.box{
+
+width:92%;
+max-width:430px;
+min-height:520px;
+
+padding:28px;
+
+border-radius:25px;
+background:white;
+
+text-align:center;
+position:relative;
+z-index:10;
+
+box-shadow:0 0 20px rgba(0,0,0,.2);
+
+transition:.4s;
+overflow:hidden;
+
+}
+
+.goyang{
+animation:goyang .4s;
+}
+
+@keyframes goyang{
+0%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+50%{transform:translateX(10px);}
+75%{transform:translateX(-10px);}
+100%{transform:translateX(0);}
+}
+
+button{
+
+padding:12px;
+margin:8px;
+width:85%;
+
+border:none;
+border-radius:15px;
+
+font-size:16px;
+cursor:pointer;
+
+background:#ffb6d9;
+color:black;
+
+transition:.3s;
+
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+#pilihan{
+
+height:320px;
+
+position:relative;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+gap:12px;
+
+}
+
+.kabur{
+position:absolute;
+width:120px;
+}
+
+.star{
+position:absolute;
+opacity:0;
+animation:blink 2s infinite;
+pointer-events:none;
+}
+
+@keyframes blink{
+0%{opacity:0;}
+50%{opacity:1;}
+100%{opacity:0;}
+}
+
+.emoji{
+position:absolute;
+pointer-events:none;
+}
+
+.progress{
+
+width:100%;
+height:10px;
+
+background:#eee;
+
+border-radius:20px;
+
+overflow:hidden;
+
+margin-bottom:20px;
+
+}
+
+.progress div{
+
+height:100%;
+width:0%;
+
+background:#ffb6d9;
+
+transition:.5s;
+
+}
+
+.fade{
+animation:fade .8s;
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+.membesar{
+animation:boom .5s;
+}
+
+@keyframes boom{
+
+0%{
+transform:scale(1);
+}
+
+40%{
+transform:scale(1.4);
+}
+
+70%{
+transform:scale(.9);
+}
+
+100%{
+transform:scale(30);
+opacity:0;
+}
+
+}
+
+</style>
+
+</head>
+<body>
+
+<div id="bintang"></div>
+
+<div class="box" id="box">
+
+<h2>Ada sesuatu buat kamu ✨</h2>
+
+<br>
+
+<p>
+Ikuti sampai akhir ya 🌸
+</p>
+
+<br>
+
+<button onclick="mulai()">
+Mulai
+</button>
+
+</div>
+
+<div id="emojiArea"></div>
+
+<script>
+
+let soal=[
+
+{
+t:"2+2=?",
+o:["3","4","5"],
+b:"4"
+},
+
+{
+t:"Huruf setelah C?",
+o:["D","A","Z"],
+b:"D"
+},
+
+{
+t:"Warna daun?",
+o:["Hijau","Merah","Biru"],
+b:"Hijau"
+},
+
+{
+t:"Jumlah kaki laba-laba?",
+o:["4","8","10"],
+b:"8"
+}
+
+];
+
+let no=0;
+let kabur=0;
+
+buatBintang();
+
+function mulai(){
+
+box.innerHTML=`
+<h2 id="load">
+Menyiapkan...0%
+</h2>
+`;
+
+let persen=[10,45,70,100];
+
+let i=0;
+
+let x=setInterval(()=>{
+
+load.innerText=
+"Menyiapkan..."+persen[i]+"%";
+
+i++;
+
+if(i==4){
+
+clearInterval(x);
+
+countdown();
+
+}
+
+},800);
+
+}
+
+function countdown(){
+
+let n=3;
+
+box.innerHTML=
+`<h1 id="angka">${n}</h1>`;
+
+let x=setInterval(()=>{
+
+n--;
+
+angka.innerText=n;
+
+if(n==0){
+
+clearInterval(x);
+
+tampil();
+
+}
+
+},1000);
+
+}
+
+function tampil(){
+
+if(no>=soal.length){
+
+akhir();
+return;
+
+}
+
+let s=soal[no];
+
+box.innerHTML=`
+
+<div class="progress">
+<div style="
+width:${(no/soal.length)*100}%
+"></div>
+</div>
+
+<h3>
+Pertanyaan ${no+1}
+</h3>
+
+<br>
+
+<h2>
+${s.t}
+</h2>
+
+<br>
+
+<div id="pilihan"></div>
+
+`;
+
+let html="";
+
+s.o.forEach(x=>{
+
+let tambah="";
+
+if(no==3 && x==s.b){
+
+tambah=
+'id="benar" class="kabur"';
+
+}
+
+html+=`
+
+<button ${tambah}
+onclick="cek('${x}',this)">
+${x}
+</button>
+
+`;
+
+});
+
+pilihan.innerHTML=html;
+
+}
+
+function cek(j,el){
+
+let s=soal[no];
+
+if(j!=s.b){
+
+box.classList.add("goyang");
+
+setTimeout(()=>{
+
+box.classList.remove("goyang");
+
+},400);
+
+return;
+
+}
+
+if(no==3){
+
+if(kabur<3){
+
+let posisi=[
+
+{x:10,y:10},
+{x:250,y:20},
+{x:20,y:220}
+
+];
+
+let p=posisi[kabur];
+
+el.style.left=p.x+"px";
+el.style.top=p.y+"px";
+
+el.style.transform=
+`rotate(${Math.random()*40}deg)
+scale(.8)`;
+
+kabur++;
+
+if(kabur==3){
+
+pilihan.innerHTML=`
+
+<div style="margin-top:55px">
+
+<button style="
+display:block;
+margin:12px auto;
+"
+onclick="salah()">
+8
+</button>
+
+<button style="
+display:block;
+margin:12px auto;
+"
+onclick="lanjut()">
+8
+</button>
+
+<button style="
+display:block;
+margin:12px auto;
+"
+onclick="salah()">
+8
+</button>
+
+</div>
+
+`;
+
+}
+
+return;
+
+}
+
+}
+
+no++;
+tampil();
+
+}
+
+function salah(){
+
+box.classList.add("goyang");
+
+setTimeout(()=>{
+
+box.classList.remove("goyang");
+
+},400);
+
+}
+
+function lanjut(){
+
+let btn=
+event.target;
+
+btn.classList.add("membesar");
+
+document.body.style.transform=
+"scale(1.05)";
+
+setTimeout(()=>{
+
+document.body.style.transform=
+"scale(1)";
+
+no++;
+
+tampil();
+
+},500);
+
+}
+
+function akhir(){
+
+box.innerHTML=`
+
+<h2>
+🎉 Terima Kasih 🎉
+</h2>
+
+<br>
+
+<p>
+Terima kasih sudah menyelesaikan semuanya ✨
+</p>
+
+<br>
+
+<p>
+Silahkan pencet tombol selanjutnya 🌸
+</p>
+
+<br>
+
+<button onclick="loadingPesan()">
+Selanjutnya
+</button>
+
+`;
+
+}
+
+function loadingPesan(){
+
+box.innerHTML=`
+
+<h2 id="loadingText">
+Membuka pesan...
+</h2>
+
+`;
+
+let titik=0;
+
+let x=setInterval(()=>{
+
+titik++;
+
+loadingText.innerHTML=
+"Membuka pesan"+
+".".repeat(titik%4);
+
+},500);
+
+setTimeout(()=>{
+
+clearInterval(x);
+
+pesanAkhir();
+
+},3000);
+
+}
+
+function pesanAkhir(){
+
+box.innerHTML=`
+
+<h2 id="typing"></h2>
+
+<br>
+
+<div id="waButton"></div>
+
+`;
+
+let text=[
+
+"Halo ✨",
+"Aku cuma mau bilang...",
+"Terima kasih sudah membuka semuanya 🌸",
+"Semoga harimu menyenangkan ⭐"
+
+];
+
+let i=0;
+
+function ketik(){
+
+if(i<text.length){
+
+typing.innerHTML +=
+text[i]+"<br><br>";
+
+i++;
+
+setTimeout(ketik,1500);
+
+}else{
+
+emoji();
+
+waButton.innerHTML=`
+
+<button class="fade"
+onclick="wa()">
+Chat WhatsApp 💌
+</button>
+
+`;
+
+}
+
+}
+
+ketik();
+
+}
+
+function wa(){
+
+window.location.href=
+"https://wa.me/6285137772160";
+
+}
+
+function buatBintang(){
+
+setInterval(()=>{
+
+let s=
+document.createElement("div");
+
+s.className=
+"star";
+
+s.innerHTML="✨";
+
+s.style.left=
+Math.random()*100+"%";
+
+s.style.top=
+Math.random()*100+"%";
+
+document.body.appendChild(s);
+
+setTimeout(()=>{
+
+s.remove();
+
+},2000);
+
+},800);
+
+}
+
+function emoji(){
+
+let list=[
+"✨",
+"🌸",
+"🎉",
+"⭐",
+"🎊",
+"☁️",
+"🌈"
+];
+
+let hujan=
+setInterval(()=>{
+
+for(let i=0;i<6;i++){
+
+let e=
+document.createElement("div");
+
+e.className=
+"emoji";
+
+e.innerHTML=
+list[Math.floor(
+Math.random()*list.length
+)];
+
+e.style.left=
+Math.random()*100+"%";
+
+e.style.top="-50px";
+
+e.style.fontSize=
+(18+Math.random()*15)+"px";
+
+e.style.transition=
+(3+Math.random()*2)+"s linear";
+
+emojiArea.appendChild(e);
+
+setTimeout(()=>{
+
+e.style.top="110%";
+
+},50);
+
+setTimeout(()=>{
+
+e.remove();
+
+},5000);
+
+}
+
+},350);
+
+setTimeout(()=>{
+
+clearInterval(hujan);
+
+},9000);
+
+}
+
+</script>
+
+</body>
+</html>
