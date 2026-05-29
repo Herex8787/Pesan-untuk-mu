@@ -30,7 +30,6 @@ background:linear-gradient(
 
 background-size:400% 400%;
 animation:bg 10s infinite;
-transition:.5s;
 }
 
 @keyframes bg{
@@ -155,55 +154,6 @@ width:0%;
 background:#ffb6d9;
 
 transition:.5s;
-
-}
-
-.fade{
-animation:fade .8s;
-}
-
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(20px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-.membesar{
-animation:boom .7s;
-z-index:999;
-position:relative;
-}
-
-@keyframes boom{
-
-0%{
-transform:scale(1);
-}
-
-30%{
-transform:scale(1.3);
-}
-
-55%{
-transform:scale(1.15);
-}
-
-80%{
-transform:scale(1.8);
-}
-
-100%{
-transform:scale(2.4);
-opacity:0;
-}
 
 }
 
@@ -490,35 +440,8 @@ box.classList.remove("goyang");
 
 function lanjut(){
 
-let btn=
-event.target;
-
-btn.innerHTML=
-"🎉";
-
-btn.classList.add("membesar");
-
-navigator.vibrate?.(100);
-
-document.body.style.transition=
-".6s";
-
-document.body.style.transform=
-"scale(1.03)";
-
-setTimeout(()=>{
-
-document.body.style.transform=
-"scale(1)";
-
-},300);
-
-setTimeout(()=>{
-
 no++;
 tampil();
-
-},650);
 
 }
 
@@ -588,54 +511,37 @@ function pesanAkhir(){
 
 box.innerHTML=`
 
-<h2 id="typing"></h2>
+<h2>
+Halo ✨
+</h2>
 
 <br>
 
-<div id="waButton"></div>
+<p>
+Makasih ya udah mau buka semuanya 🌸
+</p>
 
-`;
+<br>
 
-let text=[
+<p>
+Semoga harimu selalu menyenangkan ⭐
+</p>
 
-"Halo ✨",
-"Aku cuma mau bilang...",
-"Terima kasih sudah membuka semuanya 🌸",
-"Semoga harimu menyenangkan ⭐"
+<br>
 
-];
+<p>
+Dan semoga kamu senyum pas baca ini 😆
+</p>
 
-let i=0;
+<br>
 
-function ketik(){
-
-if(i<text.length){
-
-typing.innerHTML +=
-text[i]+"<br><br>";
-
-i++;
-
-setTimeout(ketik,1500);
-
-}else{
-
-emoji();
-
-waButton.innerHTML=`
-
-<button class="fade"
-onclick="wa()">
+<button onclick="wa()">
 Chat WhatsApp 💌
 </button>
 
 `;
 
-}
-
-}
-
-ketik();
+emoji();
 
 }
 
